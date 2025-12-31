@@ -7,8 +7,26 @@ const searchButton = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
 const card = document.querySelector(".card");
 
-let isCelsius = false; // Track unit
-let currentWeatherData = null; // Store current weather and forecast
+let isCelsius = false;
+let currentWeatherData = null;
+
+// Search history
+let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+const historyList = document.querySelector(".history-list");
+
+function renderSearchHistory(){
+    historyList.innerHTML = "";
+    searchHistory.forEach(cityName => {
+        const li = document.createElement("li");
+        li.textContent = cityName;
+        li.addEventListener("click", () => {
+            searchBox.value = cityName;
+            checkingWeather(cityName);
+        });
+        historyList.appendChild(li);
+    });
+}
+renderSearchHistory();
 
 async function checkingWeather(city){
     const response = await fetch(weatherUrl + city + `&appid=${apiKey}`);
@@ -19,8 +37,9 @@ async function checkingWeather(city){
         document.querySelector(".forecast").style.display = "none";
     } else {
         const data = await response.json();
-        currentWeatherData = data; // store for unit conversion
+        currentWeatherData = data;
 
+        // Update current weather
         document.querySelector(".city").innerHTML = data.name;
         document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°F";
         document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
@@ -33,7 +52,7 @@ async function checkingWeather(city){
         else if(data.weather[0].main == "Drizzle") weatherIcon.src = "images/drizzle.png";
         else if(data.weather[0].main == "Mist") weatherIcon.src = "images/mist.png";
 
-        // Dynamic card background
+        // Card background
         let background = "";
         switch(data.weather[0].main){
             case "Clouds": background = "linear-gradient(135deg, #bdc3c7, #2c3e50)"; break;
@@ -44,12 +63,18 @@ async function checkingWeather(city){
             default: background = "linear-gradient(135deg, #00feba, #5b548a)";
         }
         card.style.background = background;
-
-        // Keep body dark
         document.body.style.background = "#222";
 
         document.querySelector(".weather").style.display = "block";
         document.querySelector(".error").style.display = "none";
+
+        // Update search history
+        if (!searchHistory.includes(city)) {
+            searchHistory.unshift(city);
+            if(searchHistory.length > 5) searchHistory.pop();
+            localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+            renderSearchHistory();
+        }
 
         showForecast(city);
     }
@@ -71,9 +96,7 @@ searchBox.addEventListener("keypress", (e) => {
 document.getElementById("toggleUnit").addEventListener("click", () => {
     isCelsius = !isCelsius;
     document.getElementById("toggleUnit").textContent = isCelsius ? "Show in °F" : "Show in °C";
-    if(currentWeatherData){
-        updateUnits();
-    }
+    if(currentWeatherData) updateUnits();
 });
 
 function updateUnits(){
@@ -85,7 +108,7 @@ function updateUnits(){
 
     if(isCelsius){
         temp = ((temp - 32) * 5/9).toFixed(1);
-        wind = (wind * 0.44704).toFixed(1); // mph → m/s
+        wind = (wind * 0.44704).toFixed(1);
         document.querySelector(".temp").innerHTML = temp + "°C";
         document.querySelector(".wind").innerHTML = wind + " m/s";
     } else {
@@ -99,11 +122,10 @@ function updateUnits(){
     const forecastCards = document.querySelectorAll(".forecast-card");
     if(!currentWeatherData.forecastData) return;
     const forecastByDay = {};
-
     currentWeatherData.forecastData.list.forEach(item => {
         const date = new Date(item.dt_txt);
         const day = date.toLocaleDateString('en-US', { weekday: 'short' });
-        if (!forecastByDay[day]) forecastByDay[day] = [];
+        if(!forecastByDay[day]) forecastByDay[day] = [];
         forecastByDay[day].push(item);
     });
 
@@ -133,7 +155,7 @@ async function showForecast(city){
     if(response.status == 404) return;
 
     const data = await response.json();
-    currentWeatherData.forecastData = data; // store for unit conversion
+    currentWeatherData.forecastData = data;
 
     const forecastContainer = document.querySelector(".forecast-cards");
     forecastContainer.innerHTML = "";

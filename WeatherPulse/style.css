@@ -66,6 +66,35 @@ body{
 .unit-toggle button:hover {
     background: rgba(255, 255, 255, 0.4);
 }
+.search-history {
+    margin-top: 15px;
+    text-align: center;
+}
+.search-history h4 {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 5px;
+}
+.history-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 0;
+}
+.history-list li {
+    background: rgba(255,255,255,0.2);
+    padding: 5px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff;
+    transition: background 0.2s;
+}
+.history-list li:hover {
+    background: rgba(255,255,255,0.4);
+}
 .weather-icon{
     width: 170px;
     margin-top: 30px;
