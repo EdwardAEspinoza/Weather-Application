@@ -6,6 +6,7 @@
 }
 body{
     background: #222;
+    transition: background 1s ease;
 }
 .card{
     width: 90%;
@@ -90,6 +91,7 @@ body{
     margin-top: 10px;
     display: none;
 }
+
 .forecast {
     margin-top: 40px;
     text-align: center;

@@ -5,6 +5,7 @@ const forecastUrl = "https://api.openweathermap.org/data/2.5/forecast?units=impe
 const searchBox = document.querySelector(".search input");
 const searchButton = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
+const card = document.querySelector(".card");
 
 async function checkingWeather(city){
     const response = await fetch(weatherUrl + city + `&appid=${apiKey}`);
@@ -21,6 +22,7 @@ async function checkingWeather(city){
         document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
         document.querySelector(".wind").innerHTML = data.wind.speed + "mph"; 
 
+        // Weather icon
         if(data.weather[0].main =="Clouds"){
             weatherIcon.src = "images/clouds.png";
         }
@@ -36,6 +38,32 @@ async function checkingWeather(city){
         else if(data.weather[0].main == "Mist"){
             weatherIcon.src = "images/mist.png";
         }
+
+        // Dynamic background for card
+        let background = "";
+        switch(data.weather[0].main){
+            case "Clouds":
+                background = "linear-gradient(135deg, #bdc3c7, #2c3e50)";
+                break;
+            case "Clear":
+                background = "linear-gradient(135deg, #f6d365, #fda085)";
+                break;
+            case "Rain":
+                background = "linear-gradient(135deg, #00c6fb, #005bea)";
+                break;
+            case "Drizzle":
+                background = "linear-gradient(135deg, #89f7fe, #66a6ff)";
+                break;
+            case "Mist":
+                background = "linear-gradient(135deg, #d7d2cc, #304352)";
+                break;
+            default:
+                background = "linear-gradient(135deg, #00feba, #5b548a)";
+        }
+        card.style.background = background;
+
+        // Optional: keep body background dark
+        document.body.style.background = "#222";
 
         document.querySelector(".weather").style.display = "block";
         document.querySelector(".error").style.display = "none";
@@ -99,16 +127,16 @@ async function showForecast(city){
             default: iconUrl = "images/clear.png";
         }
 
-        const card = document.createElement("div");
-        card.className = "forecast-card";
+        const cardForecast = document.createElement("div");
+        cardForecast.className = "forecast-card";
 
-        card.innerHTML = `
+        cardForecast.innerHTML = `
             <p>${day}</p>
             <img src="${iconUrl}">
             <p class="temps">${maxTemp}°F / ${minTemp}°F</p>
         `;
-        
-        forecastContainer.appendChild(card);
+
+        forecastContainer.appendChild(cardForecast);
     });
 
     document.querySelector(".forecast").style.display = "block";
