@@ -64,37 +64,51 @@ async function showForecast(city){
     const forecastContainer = document.querySelector(".forecast-cards");
     forecastContainer.innerHTML = "";
 
-    // Track days we already added
-    const addedDays = new Set();
+    // Group forecast data by day
+    const forecastByDay = {};
 
     data.list.forEach(item => {
         const date = new Date(item.dt_txt);
         const day = date.toLocaleDateString('en-US', { weekday: 'short' });
 
-        if (!addedDays.has(day)) {
-            addedDays.add(day);
-
-            const card = document.createElement("div");
-            card.className = "forecast-card";
-
-            let iconUrl = "";
-            switch(item.weather[0].main){
-                case "Clouds": iconUrl = "images/clouds.png"; break;
-                case "Clear": iconUrl = "images/clear.png"; break;
-                case "Rain": iconUrl = "images/rain.png"; break;
-                case "Drizzle": iconUrl = "images/drizzle.png"; break;
-                case "Mist": iconUrl = "images/mist.png"; break;
-                default: iconUrl = "images/clear.png";
-            }
-
-            card.innerHTML = `
-                <p>${day}</p>
-                <img src="${iconUrl}">
-                <p>${Math.round(item.main.temp)}°F</p>
-            `;
-
-            forecastContainer.appendChild(card);
+        if (!forecastByDay[day]) {
+            forecastByDay[day] = [];
         }
+        forecastByDay[day].push(item);
+    });
+
+    // Get first 5 days
+    const days = Object.keys(forecastByDay).slice(0, 5);
+
+    days.forEach(day => {
+        const dayData = forecastByDay[day];
+
+        // Calculate min and max temperature for the day
+        const temps = dayData.map(d => d.main.temp);
+        const minTemp = Math.round(Math.min(...temps));
+        const maxTemp = Math.round(Math.max(...temps));
+
+        // Use the first entry for the weather icon
+        let iconUrl = "";
+        switch(dayData[0].weather[0].main){
+            case "Clouds": iconUrl = "images/clouds.png"; break;
+            case "Clear": iconUrl = "images/clear.png"; break;
+            case "Rain": iconUrl = "images/rain.png"; break;
+            case "Drizzle": iconUrl = "images/drizzle.png"; break;
+            case "Mist": iconUrl = "images/mist.png"; break;
+            default: iconUrl = "images/clear.png";
+        }
+
+        const card = document.createElement("div");
+        card.className = "forecast-card";
+
+        card.innerHTML = `
+            <p>${day}</p>
+            <img src="${iconUrl}">
+            <p>${maxTemp}°F / ${minTemp}°F</p>
+        `;
+
+        forecastContainer.appendChild(card);
     });
 
     document.querySelector(".forecast").style.display = "block";
