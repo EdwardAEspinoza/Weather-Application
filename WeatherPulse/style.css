@@ -90,3 +90,33 @@ body{
     margin-top: 10px;
     display: none;
 }
+.forecast {
+    margin-top: 40px;
+    text-align: center;
+    display: none; /* hidden until search */
+}
+.forecast h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.forecast-cards {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.forecast-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 15px;
+    width: 80px;
+    text-align: center;
+}
+.forecast-card img {
+    width: 40px;
+    margin-bottom: 10px;
+}
+.forecast-card p {
+    font-size: 14px;
+    margin: 2px 0;
+}
