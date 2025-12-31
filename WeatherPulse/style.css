@@ -17,7 +17,9 @@ body{
     border-radius: 20px;
     padding: 40px 35px;
     text-align: center;
+    position: relative;
     transition: background 1s ease;
+    overflow: hidden;
 }
 .search{
     width: 100%;
@@ -98,6 +100,11 @@ body{
 .weather-icon{
     width: 170px;
     margin-top: 30px;
+}
+.local-time {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #fff;
 }
 .weather h1{
     font-size: 80px;
@@ -183,4 +190,26 @@ body{
     font-size: 14px;
     margin-top: 5px;
     color: #fffb;
+}
+
+/* Weather Animations */
+.weather-animation {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.raindrop {
+    position: absolute;
+    width: 2px;
+    height: 10px;
+    background: rgba(255,255,255,0.7);
+    animation: fall 1s linear infinite;
+}
+@keyframes fall {
+    0% { top: -10px; }
+    100% { top: 100%; }
 }
