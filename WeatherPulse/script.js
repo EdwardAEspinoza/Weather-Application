@@ -105,9 +105,9 @@ async function showForecast(city){
         card.innerHTML = `
             <p>${day}</p>
             <img src="${iconUrl}">
-            <p>${maxTemp}°F / ${minTemp}°F</p>
+            <p class="temps">${maxTemp}°F / ${minTemp}°F</p>
         `;
-
+        
         forecastContainer.appendChild(card);
     });
 
