@@ -6,15 +6,25 @@ const searchBox = document.querySelector(".search input");
 const searchButton = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
 const card = document.querySelector(".card");
+const historyList = document.querySelector(".history-list");
+const toggleUnitBtn = document.getElementById("toggleUnit");
 
 let isCelsius = false;
 let currentWeatherData = null;
+let lang = {};
+let currentLang = "en"; // default
 
-// Search history
+// Load language JSON
+async function loadLanguageData() {
+    const response = await fetch("lang.json");
+    lang = await response.json();
+    updateLabels();
+}
+loadLanguageData();
+
+// Render search history
 let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
-const historyList = document.querySelector(".history-list");
-
-function renderSearchHistory(){
+function renderSearchHistory() {
     historyList.innerHTML = "";
     searchHistory.forEach(cityName => {
         const li = document.createElement("li");
@@ -28,18 +38,25 @@ function renderSearchHistory(){
 }
 renderSearchHistory();
 
-// Geolocation
+// Update labels based on language
+function updateLabels() {
+    toggleUnitBtn.textContent = isCelsius ? lang[currentLang].showInF : lang[currentLang].showInC;
+    document.querySelector(".search-history h4").textContent = lang[currentLang].recentSearches;
+    document.querySelector(".forecast h3").textContent = lang[currentLang].forecast5Day;
+    if(currentWeatherData) updateWeatherUI(currentWeatherData);
+}
+
+// Geolocation on load
 window.addEventListener("load", () => {
     if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(position => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            checkingWeatherByCoords(lat, lon);
+        navigator.geolocation.getCurrentPosition(pos => {
+            checkingWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
         });
     }
 });
 
-async function checkingWeatherByCoords(lat, lon){
+// Fetch weather by coordinates
+async function checkingWeatherByCoords(lat, lon) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
     if(response.status == 404) return;
     const data = await response.json();
@@ -48,7 +65,7 @@ async function checkingWeatherByCoords(lat, lon){
     showForecast(data.name);
 }
 
-// Main weather function
+// Main weather fetch
 async function checkingWeather(city){
     const response = await fetch(weatherUrl + city + `&appid=${apiKey}`);
     if(response.status == 404){
@@ -61,7 +78,7 @@ async function checkingWeather(city){
         updateWeatherUI(data);
         showForecast(city);
 
-        if (!searchHistory.includes(city)) {
+        if(!searchHistory.includes(city)){
             searchHistory.unshift(city);
             if(searchHistory.length > 5) searchHistory.pop();
             localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
@@ -70,45 +87,77 @@ async function checkingWeather(city){
     }
 }
 
-// Update UI function
+// Update weather UI
 function updateWeatherUI(data){
     document.querySelector(".city").textContent = data.name;
     document.querySelector(".temp").textContent = isCelsius ? ((data.main.temp - 32) * 5/9).toFixed(1) + "°C" : Math.round(data.main.temp) + "°F";
     document.querySelector(".humidity").textContent = data.main.humidity + "%";
     document.querySelector(".wind").textContent = isCelsius ? (data.wind.speed * 0.44704).toFixed(1) + " m/s" : data.wind.speed + " mph";
 
-    const weatherMain = data.weather[0].main;
-    weatherIcon.src = `images/${weatherMain.toLowerCase()}.png`;
+    // Labels
+    document.querySelector(".humidity + p").textContent = lang[currentLang].humidity;
+    document.querySelector(".wind + p").textContent = lang[currentLang].wind;
+
+    // Weather icon
+    const weatherMain = data.weather[0].main.toLowerCase();
+    weatherIcon.src = `images/${weatherMain}.png`;
 
     // Dynamic background
     let background = "";
     switch(weatherMain){
-        case "Clouds": background = "linear-gradient(135deg, #bdc3c7, #2c3e50)"; break;
-        case "Clear": background = "linear-gradient(135deg, #f6d365, #fda085)"; break;
-        case "Rain": background = "linear-gradient(135deg, #00c6fb, #005bea)"; break;
-        case "Drizzle": background = "linear-gradient(135deg, #89f7fe, #66a6ff)"; break;
-        case "Mist": background = "linear-gradient(135deg, #d7d2cc, #304352)"; break;
+        case "clouds": background = "linear-gradient(135deg, #bdc3c7, #2c3e50)"; break;
+        case "clear": background = "linear-gradient(135deg, #f6d365, #fda085)"; break;
+        case "rain": background = "linear-gradient(135deg, #00c6fb, #005bea)"; break;
+        case "drizzle": background = "linear-gradient(135deg, #89f7fe, #66a6ff)"; break;
+        case "mist": background = "linear-gradient(135deg, #d7d2cc, #304352)"; break;
         default: background = "linear-gradient(135deg, #00feba, #5b548a)";
     }
     card.style.background = background;
 
     // Local time
     const timezoneOffset = data.timezone;
-    const localTime = new Date(new Date().getTime() + timezoneOffset*1000 - new Date().getTimezoneOffset()*60000);
-    document.querySelector(".local-time").textContent = "Local Time: " + localTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const utcTime = new Date().getTime() + new Date().getTimezoneOffset()*60000; 
+    const localTime = new Date(utcTime + timezoneOffset*1000);
+    const options = {hour: 'numeric', minute:'2-digit', hour12:true};
+    document.querySelector(".local-time").textContent = `${lang[currentLang].localTime}: ${localTime.toLocaleTimeString('en-US', options)}`;
 
     // Weather animations
-    setWeatherAnimation(weatherMain);
+    setWeatherAnimation(data.weather[0].main, data);
 
     document.querySelector(".weather").style.display = "block";
     document.querySelector(".error").style.display = "none";
 }
 
-// Weather animations
-function setWeatherAnimation(weatherMain){
+// Weather animations (sun, moon, clouds, rain)
+function setWeatherAnimation(weatherMain, data) {
     const animationContainer = document.querySelector(".weather-animation");
     animationContainer.innerHTML = "";
 
+    const timezoneOffset = data.timezone;
+    const utcTime = new Date().getTime() + new Date().getTimezoneOffset()*60000; 
+    const localTime = new Date(utcTime + timezoneOffset*1000);
+    const hours = localTime.getHours();
+
+    // Sun or moon
+    if(weatherMain === "Clear"){
+        const sunMoon = document.createElement("div");
+        sunMoon.className = hours >= 6 && hours < 18 ? "sun" : "moon";
+        animationContainer.appendChild(sunMoon);
+    }
+
+    // Clouds
+    if(weatherMain === "Clouds" || weatherMain === "Mist" || weatherMain === "Drizzle"){
+        for(let i=0; i<5; i++){
+            const cloud = document.createElement("div");
+            cloud.className = "cloud";
+            cloud.style.top = (10 + Math.random()*30) + "%";
+            cloud.style.left = Math.random()*100 + "%";
+            cloud.style.animationDuration = (20 + Math.random()*20) + "s";
+            animationContainer.appendChild(cloud);
+        }
+    }
+
+    // Rain
     if(weatherMain === "Rain"){
         for(let i=0;i<30;i++){
             const drop = document.createElement("div");
@@ -122,16 +171,22 @@ function setWeatherAnimation(weatherMain){
 
 // Event listeners
 searchButton.addEventListener("click", () => checkingWeather(searchBox.value));
-searchBox.addEventListener("keypress", (e) => { if(e.key==="Enter") checkingWeather(searchBox.value); });
+searchBox.addEventListener("keypress", e => { if(e.key==="Enter") checkingWeather(searchBox.value); });
 
-// Unit conversion
-document.getElementById("toggleUnit").addEventListener("click", () => {
+// Unit toggle
+toggleUnitBtn.addEventListener("click", () => {
     isCelsius = !isCelsius;
-    document.getElementById("toggleUnit").textContent = isCelsius ? "Show in °F" : "Show in °C";
+    toggleUnitBtn.textContent = isCelsius ? lang[currentLang].showInF : lang[currentLang].showInC;
     if(currentWeatherData) updateWeatherUI(currentWeatherData);
 });
 
-// Forecast
+// Language toggle button
+document.getElementById("toggleLang").addEventListener("click", () => {
+    currentLang = currentLang === "en" ? "es" : "en";
+    updateLabels();
+});
+
+// 5-Day Forecast
 async function showForecast(city){
     const response = await fetch(forecastUrl + city + `&appid=${apiKey}`);
     if(response.status == 404) return;
@@ -146,12 +201,11 @@ async function showForecast(city){
     data.list.forEach(item => {
         const date = new Date(item.dt_txt);
         const day = date.toLocaleDateString('en-US', { weekday: 'short' });
-        if (!forecastByDay[day]) forecastByDay[day] = [];
+        if(!forecastByDay[day]) forecastByDay[day] = [];
         forecastByDay[day].push(item);
     });
 
-    const days = Object.keys(forecastByDay).slice(0, 5);
-
+    const days = Object.keys(forecastByDay).slice(0,5);
     days.forEach(day => {
         const dayData = forecastByDay[day];
         const temps = dayData.map(d => d.main.temp);

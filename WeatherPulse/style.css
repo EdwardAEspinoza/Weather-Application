@@ -1,14 +1,16 @@
-*{
+* {
     margin: 0;
     padding: 0;
     font-family: 'Poppins', sans-serif;
     box-sizing: border-box;
 }
-body{
+
+body {
     background: #222;
     transition: background 1s ease;
 }
-.card{
+
+.card {
     width: 90%;
     max-width: 470px;
     background: linear-gradient(135deg, #00feba, #5b548a);
@@ -21,13 +23,16 @@ body{
     transition: background 1s ease;
     overflow: hidden;
 }
-.search{
+
+/* Search */
+.search {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.search input{
+
+.search input {
     border: 0;
     outline: 0;
     background: #ebfffc;
@@ -39,7 +44,8 @@ body{
     margin-right: 16px;
     font-size: 18px;
 }
-.search button{
+
+.search button {
     border: 0;
     outline: 0;
     background: #ebfffc;
@@ -48,13 +54,17 @@ body{
     height: 60px;
     cursor: pointer;
 }
-.search button img{
+
+.search button img {
     width: 16px;
 }
+
+/* Unit toggle */
 .unit-toggle {
     margin-top: 15px;
     text-align: center;
 }
+
 .unit-toggle button {
     padding: 8px 16px;
     border: none;
@@ -65,18 +75,44 @@ body{
     font-size: 14px;
     transition: background 0.2s;
 }
+
 .unit-toggle button:hover {
     background: rgba(255, 255, 255, 0.4);
 }
+
+/* Language toggle */
+.lang-toggle {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.lang-toggle button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.lang-toggle button:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Search history */
 .search-history {
     margin-top: 15px;
     text-align: center;
 }
+
 .search-history h4 {
     font-size: 16px;
     color: #fff;
     margin-bottom: 5px;
 }
+
 .history-list {
     list-style: none;
     display: flex;
@@ -85,6 +121,7 @@ body{
     gap: 10px;
     padding: 0;
 }
+
 .history-list li {
     background: rgba(255,255,255,0.2);
     padding: 5px 10px;
@@ -94,74 +131,92 @@ body{
     color: #fff;
     transition: background 0.2s;
 }
+
 .history-list li:hover {
     background: rgba(255,255,255,0.4);
 }
-.weather-icon{
+
+/* Weather display */
+.weather-icon {
     width: 170px;
     margin-top: 30px;
 }
+
 .local-time {
     margin-top: 10px;
     font-size: 16px;
     color: #fff;
 }
-.weather h1{
+
+.weather h1 {
     font-size: 80px;
     font-weight: 500;
 }
-.weather h2{
+
+.weather h2 {
     font-size: 45px;
     font-weight: 400;
     margin-top: -10px;
 }
-.details{
+
+.details {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
     margin-top: 50px;
 }
-.col{
+
+.col {
     display: flex;
     align-items: center;
     text-align: left;
 }
-.col img{
+
+.col img {
     width: 40px;
-    margin-right: 10px
+    margin-right: 10px;
 }
-.humidity, .wind{
+
+.humidity, .wind {
     font-size: 28px;
     margin-top: -6px;
 }
-.weather{
+
+.weather {
     display: none;
 }
-.error{
+
+/* Error */
+.error {
     text-align: left;
     margin-left: 10px;
     font-size: 14px;
     margin-top: 10px;
     display: none;
 }
+
+/* Forecast */
 .forecast {
     margin-top: 40px;
     text-align: center;
     display: none;
 }
+
 .forecast h3 {
     font-size: 24px;
     margin-bottom: 20px;
     color: #fff;
     font-weight: 500;
 }
+
 .forecast-cards {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 15px;
 }
+
 .forecast-card {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
@@ -173,18 +228,22 @@ body{
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .forecast-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.4);
 }
+
 .forecast-card p {
     font-size: 14px;
     margin: 5px 0;
 }
+
 .forecast-card img {
     width: 50px;
     margin: 5px 0;
 }
+
 .forecast-card .temps {
     font-weight: 500;
     font-size: 14px;
@@ -202,6 +261,8 @@ body{
     pointer-events: none;
     overflow: hidden;
 }
+
+/* Raindrops */
 .raindrop {
     position: absolute;
     width: 2px;
@@ -209,7 +270,48 @@ body{
     background: rgba(255,255,255,0.7);
     animation: fall 1s linear infinite;
 }
+
 @keyframes fall {
     0% { top: -10px; }
     100% { top: 100%; }
+}
+
+/* Clouds */
+.cloud {
+    position: absolute;
+    width: 80px;
+    height: 50px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    animation-name: floatCloud;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes floatCloud {
+    0% { transform: translateX(-100px); }
+    100% { transform: translateX(100vw); }
+}
+
+/* Sun / Moon */
+.sun, .moon {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 20%;
+    right: 10%;
+    animation: float 6s ease-in-out infinite alternate;
+    box-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+.sun {
+    background: yellow;
+}
+.moon {
+    background: #f0f0f0;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(10px); }
 }

@@ -8,24 +8,34 @@
 <body>
 
 <div class="card">
+    <!-- Search -->
     <div class="search">
         <input type="text" placeholder="Enter City name" spellcheck="false">
         <button><img src="images/search.png"></button>
     </div>
 
+    <!-- Unit Toggle -->
     <div class="unit-toggle">
         <button id="toggleUnit">Show in °C</button>
     </div>
 
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button id="toggleLang">Español</button>
+    </div>
+
+    <!-- Search History -->
     <div class="search-history">
         <h4>Recent Searches</h4>
         <ul class="history-list"></ul>
     </div>
 
+    <!-- Error -->
     <div class="error">
         <h1>City not found</h1>
     </div>
 
+    <!-- Weather Info -->
     <div class="weather">
         <div class="weather-animation"></div>
         <img src="images/rain.png" class="weather-icon">
@@ -50,6 +60,7 @@
         </div>
     </div>
 
+    <!-- 5-Day Forecast -->
     <div class="forecast">
         <h3>5-Day Forecast</h3>
         <div class="forecast-cards"></div>

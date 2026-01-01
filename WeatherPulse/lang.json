@@ -1,0 +1,23 @@
+{
+    "en": {
+        "humidity": "Humidity",
+        "wind": "Wind Speed",
+        "forecast5Day": "5-Day Forecast",
+        "localTime": "Local Time",
+        "recentSearches": "Recent Searches",
+        "showInC": "Show in °C",
+        "showInF": "Show in °F",
+        "toggleLang": "Español"
+    },
+    "es": {
+        "humidity": "Humedad",
+        "wind": "Viento",
+        "forecast5Day": "Pronóstico 5 Días",
+        "localTime": "Hora Local",
+        "recentSearches": "Búsquedas Recientes",
+        "showInC": "Mostrar en °C",
+        "showInF": "Mostrar en °F",
+        "toggleLang": "English"
+    }
+}
+
