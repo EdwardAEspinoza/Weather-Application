@@ -1,23 +1,30 @@
 {
-    "en": {
-        "humidity": "Humidity",
-        "wind": "Wind Speed",
-        "forecast5Day": "5-Day Forecast",
-        "localTime": "Local Time",
-        "recentSearches": "Recent Searches",
-        "showInC": "Show in °C",
-        "showInF": "Show in °F",
-        "toggleLang": "Español"
-    },
-    "es": {
-        "humidity": "Humedad",
-        "wind": "Viento",
-        "forecast5Day": "Pronóstico 5 Días",
-        "localTime": "Hora Local",
-        "recentSearches": "Búsquedas Recientes",
-        "showInC": "Mostrar en °C",
-        "showInF": "Mostrar en °F",
-        "toggleLang": "English"
-    }
+  "en": {
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "forecast5Day": "5-Day Forecast",
+    "recentSearches": "Recent Searches",
+    "localTime": "Local Time",
+    "showInC": "Show in °C",
+    "showInF": "Show in °F",
+    "toggleLang": "ES",
+    "today": "Today",
+    "searchPlaceholder": "Enter City Name",
+    "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  },
+  "es": {
+    "humidity": "Humedad",
+    "wind": "Viento",
+    "forecast5Day": "Pronóstico 5 Días",
+    "recentSearches": "Búsquedas Recientes",
+    "localTime": "Hora Local",
+    "showInC": "Mostrar en °C",
+    "showInF": "Mostrar en °F",
+    "toggleLang": "EN",
+    "today": "Hoy",
+    "searchPlaceholder": "Ingrese el nombre de la ciudad",
+    "weekdays": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
+  }
 }
+
 

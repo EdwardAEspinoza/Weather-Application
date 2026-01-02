@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherPulse</title>
@@ -8,63 +8,67 @@
 <body>
 
 <div class="card">
-    <!-- Search -->
-    <div class="search">
-        <input type="text" placeholder="Enter City name" spellcheck="false">
-        <button><img src="images/search.png"></button>
+
+    <!-- Top bar for language toggle -->
+    <div class="top-bar">
+        <div class="lang-toggle">
+            <button id="lang-toggle">ES</button>
+        </div>
     </div>
 
-    <!-- Unit Toggle -->
+    <!-- Search -->
+    <div class="search">
+        <input type="text" placeholder="Enter City Name" spellcheck="false" id="searchInput">
+        <button id="searchButton"><img src="images/search.png" alt="Search"></button>
+    </div>
+
+    <!-- Unit toggle -->
     <div class="unit-toggle">
         <button id="toggleUnit">Show in °C</button>
     </div>
 
-    <!-- Language Toggle -->
-    <div class="lang-toggle">
-        <button id="toggleLang">Español</button>
-    </div>
-
-    <!-- Search History -->
+    <!-- Search history -->
     <div class="search-history">
-        <h4>Recent Searches</h4>
+        <h4 id="recentSearches">Recent Searches</h4>
         <ul class="history-list"></ul>
     </div>
 
     <!-- Error -->
     <div class="error">
-        <h1>City not found</h1>
+        <h1 id="errorMessage">City not found</h1>
     </div>
 
-    <!-- Weather Info -->
+    <!-- Weather display -->
     <div class="weather">
         <div class="weather-animation"></div>
-        <img src="images/rain.png" class="weather-icon">
+        <img src="images/rain.png" class="weather-icon" alt="Weather Icon">
         <h1 class="temp">68°F</h1>
         <h2 class="city">San Benito</h2>
         <p class="local-time">Local Time: --:--</p>
         <div class="details">
             <div class="col">
-                <img src="images/humidity.png">
+                <img src="images/humidity.png" alt="Humidity">
                 <div>
                     <p class="humidity">50%</p>
-                    <p>Humidity</p>
+                    <p id="humidityLabel">Humidity</p>
                 </div>
             </div>
             <div class="col">
-                <img src="images/wind.png">
+                <img src="images/wind.png" alt="Wind Speed">
                 <div>
                     <p class="wind">15 mph</p>
-                    <p>Wind Speed</p>
+                    <p id="windLabel">Wind Speed</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 5-Day Forecast -->
+    <!-- Forecast -->
     <div class="forecast">
-        <h3>5-Day Forecast</h3>
+        <h3 id="forecastTitle">5-Day Forecast</h3>
         <div class="forecast-cards"></div>
     </div>
+
 </div>
 
 <script src="script.js"></script>

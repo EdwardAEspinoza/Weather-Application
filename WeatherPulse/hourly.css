@@ -1,0 +1,72 @@
+body {
+    background: #222;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.hourly-card {
+    width: 90%;
+    max-width: 500px;
+    background: linear-gradient(135deg, #00feba, #5b548a);
+    border-radius: 20px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#city-name {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+#date-display {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.hourly-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 10px;
+}
+
+.hour-block {
+    min-width: 100px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 10px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.hour-block img {
+    width: 50px;
+    margin: 5px 0;
+}
+
+.hour-block p {
+    margin: 3px 0;
+    font-size: 14px;
+}
+
+#backButton {
+    margin-top: 20px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#backButton:hover {
+    background: rgba(255,255,255,0.4);
+}

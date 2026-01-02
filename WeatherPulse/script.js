@@ -2,35 +2,82 @@ const apiKey = "28d49ae1b3bf92f79d47d6238d907b37";
 const weatherUrl = "https://api.openweathermap.org/data/2.5/weather?units=imperial&q=";
 const forecastUrl = "https://api.openweathermap.org/data/2.5/forecast?units=imperial&q=";
 
-const searchBox = document.querySelector(".search input");
-const searchButton = document.querySelector(".search button");
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
 const weatherIcon = document.querySelector(".weather-icon");
 const card = document.querySelector(".card");
 const historyList = document.querySelector(".history-list");
-const toggleUnitBtn = document.getElementById("toggleUnit");
 
+const toggleUnitBtn = document.getElementById("toggleUnit");
+const langToggleBtn = document.getElementById("lang-toggle");
+
+// Language labels
+let langData = null;
+let currentLang = "en";
+
+// Weather data
 let isCelsius = false;
 let currentWeatherData = null;
-let lang = {};
-let currentLang = "en"; // default
+
+// Search history
+let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
 
 // Load language JSON
-async function loadLanguageData() {
+async function loadLang() {
     const response = await fetch("lang.json");
-    lang = await response.json();
-    updateLabels();
+    langData = await response.json();
+    updateLangUI();
 }
-loadLanguageData();
+loadLang();
+
+// Update UI labels based on currentLang
+function updateLangUI() {
+    if (!langData) return;
+
+    document.getElementById("recentSearches").textContent = langData[currentLang].recentSearches;
+    document.getElementById("humidityLabel").textContent = langData[currentLang].humidity;
+    document.getElementById("windLabel").textContent = langData[currentLang].wind;
+    document.getElementById("forecastTitle").textContent = langData[currentLang].forecast5Day;
+    document.getElementById("errorMessage").textContent = langData[currentLang].error || "City not found";
+    searchInput.placeholder = langData[currentLang].searchPlaceholder;
+    toggleUnitBtn.textContent = isCelsius ? langData[currentLang].showInF : langData[currentLang].showInC;
+    langToggleBtn.textContent = langData[currentLang].toggleLang;
+
+    // Update forecast card "Today"
+    const forecastCards = document.querySelectorAll(".forecast-card p:first-child");
+    if (forecastCards.length > 0) {
+        forecastCards[0].textContent = langData[currentLang].today;
+    }
+
+    // Update local time
+    if (currentWeatherData) {
+        const nowUTC = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60000);
+        const localTime = new Date(nowUTC.getTime() + currentWeatherData.timezone * 1000);
+        const timeFormatter = new Intl.DateTimeFormat(currentLang === "en" ? "en-US" : "es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        });
+        document.querySelector(".local-time").textContent =
+            `${langData[currentLang].localTime}: ${timeFormatter.format(localTime)}`;
+    }
+}
+
+// Toggle language
+langToggleBtn.addEventListener("click", () => {
+    currentLang = currentLang === "en" ? "es" : "en";
+    updateLangUI();
+    if(currentWeatherData) showForecast(currentWeatherData.name);
+});
 
 // Render search history
-let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
 function renderSearchHistory() {
     historyList.innerHTML = "";
     searchHistory.forEach(cityName => {
         const li = document.createElement("li");
         li.textContent = cityName;
         li.addEventListener("click", () => {
-            searchBox.value = cityName;
+            searchInput.value = cityName;
             checkingWeather(cityName);
         });
         historyList.appendChild(li);
@@ -38,19 +85,11 @@ function renderSearchHistory() {
 }
 renderSearchHistory();
 
-// Update labels based on language
-function updateLabels() {
-    toggleUnitBtn.textContent = isCelsius ? lang[currentLang].showInF : lang[currentLang].showInC;
-    document.querySelector(".search-history h4").textContent = lang[currentLang].recentSearches;
-    document.querySelector(".forecast h3").textContent = lang[currentLang].forecast5Day;
-    if(currentWeatherData) updateWeatherUI(currentWeatherData);
-}
-
-// Geolocation on load
+// Geolocation
 window.addEventListener("load", () => {
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(pos => {
-            checkingWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            checkingWeatherByCoords(position.coords.latitude, position.coords.longitude);
         });
     }
 });
@@ -58,7 +97,7 @@ window.addEventListener("load", () => {
 // Fetch weather by coordinates
 async function checkingWeatherByCoords(lat, lon) {
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
-    if(response.status == 404) return;
+    if (response.status == 404) return;
     const data = await response.json();
     currentWeatherData = data;
     updateWeatherUI(data);
@@ -66,9 +105,9 @@ async function checkingWeatherByCoords(lat, lon) {
 }
 
 // Main weather fetch
-async function checkingWeather(city){
+async function checkingWeather(city) {
     const response = await fetch(weatherUrl + city + `&appid=${apiKey}`);
-    if(response.status == 404){
+    if (response.status == 404) {
         document.querySelector(".error").style.display = "block";
         document.querySelector(".weather").style.display = "none";
         document.querySelector(".forecast").style.display = "none";
@@ -78,9 +117,10 @@ async function checkingWeather(city){
         updateWeatherUI(data);
         showForecast(city);
 
-        if(!searchHistory.includes(city)){
+        // Update search history
+        if (!searchHistory.includes(city)) {
             searchHistory.unshift(city);
-            if(searchHistory.length > 5) searchHistory.pop();
+            if (searchHistory.length > 5) searchHistory.pop();
             localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
             renderSearchHistory();
         }
@@ -88,17 +128,12 @@ async function checkingWeather(city){
 }
 
 // Update weather UI
-function updateWeatherUI(data){
+function updateWeatherUI(data) {
     document.querySelector(".city").textContent = data.name;
     document.querySelector(".temp").textContent = isCelsius ? ((data.main.temp - 32) * 5/9).toFixed(1) + "°C" : Math.round(data.main.temp) + "°F";
     document.querySelector(".humidity").textContent = data.main.humidity + "%";
     document.querySelector(".wind").textContent = isCelsius ? (data.wind.speed * 0.44704).toFixed(1) + " m/s" : data.wind.speed + " mph";
 
-    // Labels
-    document.querySelector(".humidity + p").textContent = lang[currentLang].humidity;
-    document.querySelector(".wind + p").textContent = lang[currentLang].wind;
-
-    // Weather icon
     const weatherMain = data.weather[0].main.toLowerCase();
     weatherIcon.src = `images/${weatherMain}.png`;
 
@@ -115,50 +150,27 @@ function updateWeatherUI(data){
     card.style.background = background;
 
     // Local time
-    const timezoneOffset = data.timezone;
-    const utcTime = new Date().getTime() + new Date().getTimezoneOffset()*60000; 
-    const localTime = new Date(utcTime + timezoneOffset*1000);
-    const options = {hour: 'numeric', minute:'2-digit', hour12:true};
-    document.querySelector(".local-time").textContent = `${lang[currentLang].localTime}: ${localTime.toLocaleTimeString('en-US', options)}`;
+    const nowUTC = new Date(new Date().getTime() + new Date().getTimezoneOffset()*60000);
+    const localTime = new Date(nowUTC.getTime() + data.timezone*1000);
+    const timeFormatter = new Intl.DateTimeFormat(currentLang === "en" ? "en-US" : "es-ES", {hour: '2-digit', minute:'2-digit', hour12:true});
+    document.querySelector(".local-time").textContent =
+        `${langData[currentLang].localTime}: ${timeFormatter.format(localTime)}`;
 
     // Weather animations
-    setWeatherAnimation(data.weather[0].main, data);
+    setWeatherAnimation(weatherMain);
 
     document.querySelector(".weather").style.display = "block";
     document.querySelector(".error").style.display = "none";
+
+    updateLangUI();
 }
 
-// Weather animations (sun, moon, clouds, rain)
-function setWeatherAnimation(weatherMain, data) {
+// Weather animation
+function setWeatherAnimation(weatherMain){
     const animationContainer = document.querySelector(".weather-animation");
     animationContainer.innerHTML = "";
 
-    const timezoneOffset = data.timezone;
-    const utcTime = new Date().getTime() + new Date().getTimezoneOffset()*60000; 
-    const localTime = new Date(utcTime + timezoneOffset*1000);
-    const hours = localTime.getHours();
-
-    // Sun or moon
-    if(weatherMain === "Clear"){
-        const sunMoon = document.createElement("div");
-        sunMoon.className = hours >= 6 && hours < 18 ? "sun" : "moon";
-        animationContainer.appendChild(sunMoon);
-    }
-
-    // Clouds
-    if(weatherMain === "Clouds" || weatherMain === "Mist" || weatherMain === "Drizzle"){
-        for(let i=0; i<5; i++){
-            const cloud = document.createElement("div");
-            cloud.className = "cloud";
-            cloud.style.top = (10 + Math.random()*30) + "%";
-            cloud.style.left = Math.random()*100 + "%";
-            cloud.style.animationDuration = (20 + Math.random()*20) + "s";
-            animationContainer.appendChild(cloud);
-        }
-    }
-
-    // Rain
-    if(weatherMain === "Rain"){
+    if(weatherMain === "rain"){
         for(let i=0;i<30;i++){
             const drop = document.createElement("div");
             drop.className = "raindrop";
@@ -166,28 +178,39 @@ function setWeatherAnimation(weatherMain, data) {
             drop.style.animationDuration = (0.5 + Math.random()) + "s";
             animationContainer.appendChild(drop);
         }
+    } else if(weatherMain === "clouds"){
+        for(let i=0;i<5;i++){
+            const cloud = document.createElement("div");
+            cloud.className = "cloud";
+            cloud.style.top = (10 + Math.random()*40) + "%";
+            cloud.style.animationDuration = (20 + Math.random()*10) + "s";
+            animationContainer.appendChild(cloud);
+        }
+    } else if(weatherMain === "clear"){
+        const sun = document.createElement("div");
+        sun.className = "sun";
+        animationContainer.appendChild(sun);
+    } else if(weatherMain === "night" || weatherMain === "moon"){
+        const moon = document.createElement("div");
+        moon.className = "moon";
+        animationContainer.appendChild(moon);
     }
 }
 
 // Event listeners
-searchButton.addEventListener("click", () => checkingWeather(searchBox.value));
-searchBox.addEventListener("keypress", e => { if(e.key==="Enter") checkingWeather(searchBox.value); });
+searchButton.addEventListener("click", () => checkingWeather(searchInput.value));
+searchInput.addEventListener("keypress", e => { if(e.key==="Enter") checkingWeather(searchInput.value); });
 
 // Unit toggle
 toggleUnitBtn.addEventListener("click", () => {
     isCelsius = !isCelsius;
-    toggleUnitBtn.textContent = isCelsius ? lang[currentLang].showInF : lang[currentLang].showInC;
+    toggleUnitBtn.textContent = isCelsius ? langData[currentLang].showInF : langData[currentLang].showInC;
     if(currentWeatherData) updateWeatherUI(currentWeatherData);
 });
 
-// Language toggle button
-document.getElementById("toggleLang").addEventListener("click", () => {
-    currentLang = currentLang === "en" ? "es" : "en";
-    updateLabels();
-});
-
-// 5-Day Forecast
-async function showForecast(city){
+// Forecast (Today + 4 next days)
+// Forecast (Today + 4 days)
+async function showForecast(city) {
     const response = await fetch(forecastUrl + city + `&appid=${apiKey}`);
     if(response.status == 404) return;
 
@@ -197,40 +220,57 @@ async function showForecast(city){
     const forecastContainer = document.querySelector(".forecast-cards");
     forecastContainer.innerHTML = "";
 
-    const forecastByDay = {};
+    // Group forecasts by date string (YYYY-MM-DD)
+    const forecastByDate = {};
     data.list.forEach(item => {
         const date = new Date(item.dt_txt);
-        const day = date.toLocaleDateString('en-US', { weekday: 'short' });
-        if(!forecastByDay[day]) forecastByDay[day] = [];
-        forecastByDay[day].push(item);
+        const dateStr = date.toISOString().split("T")[0]; // "2026-01-01"
+        if (!forecastByDate[dateStr]) forecastByDate[dateStr] = [];
+        forecastByDate[dateStr].push(item);
     });
 
-    const days = Object.keys(forecastByDay).slice(0,5);
-    days.forEach(day => {
-        const dayData = forecastByDay[day];
+    // Get today + next 4 days (5 consecutive dates)
+    const allDates = Object.keys(forecastByDate).slice(0,5);
+
+    allDates.forEach((dateStr, index) => {
+        const dayData = forecastByDate[dateStr];
         const temps = dayData.map(d => d.main.temp);
         const minTemp = Math.round(Math.min(...temps));
         const maxTemp = Math.round(Math.max(...temps));
 
+        // Correct weekday
+        const dateObj = new Date(dateStr);
+        const dayIndex = dateObj.getDay(); // 0 = Sunday
+        const dayName = index === 0 ? langData[currentLang].today : langData[currentLang].weekdays[dayIndex];
+
         let iconUrl = "";
-        switch(dayData[0].weather[0].main){
-            case "Clouds": iconUrl = "images/clouds.png"; break;
-            case "Clear": iconUrl = "images/clear.png"; break;
-            case "Rain": iconUrl = "images/rain.png"; break;
-            case "Drizzle": iconUrl = "images/drizzle.png"; break;
-            case "Mist": iconUrl = "images/mist.png"; break;
+        switch(dayData[0].weather[0].main.toLowerCase()){
+            case "clouds": iconUrl = "images/clouds.png"; break;
+            case "clear": iconUrl = "images/clear.png"; break;
+            case "rain": iconUrl = "images/rain.png"; break;
+            case "drizzle": iconUrl = "images/drizzle.png"; break;
+            case "mist": iconUrl = "images/mist.png"; break;
             default: iconUrl = "images/clear.png";
         }
 
         const cardForecast = document.createElement("div");
         cardForecast.className = "forecast-card";
+
         cardForecast.innerHTML = `
-            <p>${day}</p>
+            <p>${dayName}</p>
             <img src="${iconUrl}">
             <p class="temps">${maxTemp}°F / ${minTemp}°F</p>
         `;
+
+        // Click to hourly page
+        cardForecast.addEventListener("click", () => {
+            localStorage.setItem("selectedCity", city);
+            window.location.href = "hourly.html";
+        });
+
         forecastContainer.appendChild(cardForecast);
     });
 
     document.querySelector(".forecast").style.display = "block";
+    updateLangUI();
 }
