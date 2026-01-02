@@ -129,3 +129,47 @@ function setHourlyAnimation(weatherMain) {
         animationContainer.appendChild(moon);
     }
 }
+
+const langToggle = document.getElementById("langToggle");
+let currentLang = localStorage.getItem("lang") || "en";
+langToggle.textContent = currentLang.toUpperCase();
+
+langToggle.addEventListener("click", () => {
+    // Toggle language between English and Spanish
+    currentLang = currentLang === "en" ? "es" : "en";
+    localStorage.setItem("lang", currentLang);
+    langToggle.textContent = currentLang.toUpperCase();
+    updateDateLocale();
+});
+
+function updateDateLocale() {
+    if (!dateDisplay.textContent) return;
+    
+    const displayDate = new Date(selectedDate);
+    dateDisplay.textContent = displayDate.toLocaleDateString(
+        currentLang === "en" ? "en-US" : "es-ES",
+        { weekday: "long", month: "short", day: "numeric" }
+    );
+}
+
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function updateDateLocale() {
+    if (!dateDisplay.textContent) return;
+
+    const displayDate = new Date(selectedDate);
+    let formatted = displayDate.toLocaleDateString(
+        currentLang === "en" ? "en-US" : "es-ES",
+        { weekday: "long", month: "short", day: "numeric" }
+    );
+
+    // Capitalize the first letter of each word (weekday and month)
+    formatted = formatted.split(" ").map(word => capitalizeFirstLetter(word)).join(" ");
+
+    dateDisplay.textContent = formatted;
+}
+
+// Call once on load
+updateDateLocale();
