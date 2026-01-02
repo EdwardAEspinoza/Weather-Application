@@ -33,6 +33,25 @@ body {
     overflow: hidden;
 }
 
+/* Controls */
+.controls {
+    margin-bottom: 10px;
+}
+
+.controls button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.controls button:hover {
+    background: rgba(255,255,255,0.4);
+}
+
 /* City and date */
 #city-name {
     font-size: 32px;
@@ -96,7 +115,7 @@ body {
     background: rgba(255,255,255,0.4);
 }
 
-/* Raindrops */
+/* Animations */
 .raindrop {
     position: absolute;
     width: 2px;
@@ -110,16 +129,13 @@ body {
     100% { top: 100%; }
 }
 
-/* Clouds */
 .cloud {
     position: absolute;
     width: 80px;
     height: 50px;
     background: rgba(255,255,255,0.7);
     border-radius: 50%;
-    animation-name: floatCloud;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+    animation: floatCloud linear infinite;
 }
 
 @keyframes floatCloud {
@@ -127,7 +143,6 @@ body {
     100% { transform: translateX(100vw); }
 }
 
-/* Sun / Moon */
 .sun, .moon {
     position: absolute;
     width: 60px;
@@ -138,6 +153,7 @@ body {
     animation: float 6s ease-in-out infinite alternate;
     box-shadow: 0 0 20px rgba(255,255,255,0.5);
 }
+
 .sun { background: yellow; }
 .moon { background: #f0f0f0; }
 

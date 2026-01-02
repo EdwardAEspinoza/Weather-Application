@@ -11,6 +11,13 @@ const historyList = document.querySelector(".history-list");
 const toggleUnitBtn = document.getElementById("toggleUnit");
 const langToggleBtn = document.getElementById("lang-toggle");
 
+function formatTemp(tempF) {
+    if (isCelsius) {
+        return Math.round((tempF - 32) * 5 / 9);
+    }
+    return Math.round(tempF);
+}
+
 // Language labels
 let langData = null;
 let currentLang = "en";
@@ -205,8 +212,13 @@ searchInput.addEventListener("keypress", e => { if(e.key==="Enter") checkingWeat
 toggleUnitBtn.addEventListener("click", () => {
     isCelsius = !isCelsius;
     toggleUnitBtn.textContent = isCelsius ? langData[currentLang].showInF : langData[currentLang].showInC;
-    if(currentWeatherData) updateWeatherUI(currentWeatherData);
+
+    if (currentWeatherData) {
+        updateWeatherUI(currentWeatherData);
+        showForecast(currentWeatherData.name);
+    }
 });
+
 
 // Forecast (Today + 4 next days)
 // Forecast (Today + 4 days)
@@ -236,8 +248,9 @@ async function showForecast(city) {
     days.forEach((dateKey, index) => {
         const dayData = forecastByDay[dateKey];
         const temps = dayData.map(d => d.main.temp);
-        const minTemp = Math.round(Math.min(...temps));
-        const maxTemp = Math.round(Math.max(...temps));
+        const minTemp = formatTemp(Math.min(...temps));
+        const maxTemp = formatTemp(Math.max(...temps));
+
 
         const firstItem = dayData[0];
         const weatherMain = firstItem.weather[0].main.toLowerCase();
@@ -258,7 +271,9 @@ async function showForecast(city) {
         cardForecast.innerHTML = `
             <p>${weekday}</p>
             <img src="${iconUrl}">
-            <p class="temps">${maxTemp}°F / ${minTemp}°F</p>
+            <p class="temps">
+                ${maxTemp}°${isCelsius ? "C" : "F"} / ${minTemp}°${isCelsius ? "C" : "F"}
+            </p>
         `;
 
         // Click to hourly page
