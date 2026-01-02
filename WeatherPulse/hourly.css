@@ -17,8 +17,23 @@ body {
     margin: 50px auto;
     padding: 20px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: background 1s ease;
 }
 
+.weather-animation {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* City and date */
 #city-name {
     font-size: 32px;
     margin-bottom: 5px;
@@ -29,6 +44,7 @@ body {
     margin-bottom: 20px;
 }
 
+/* Hourly forecast container */
 .hourly-container {
     display: flex;
     overflow-x: auto;
@@ -36,14 +52,22 @@ body {
     padding-bottom: 10px;
 }
 
+/* Hour blocks */
 .hour-block {
     min-width: 100px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.15);
     backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 10px;
     text-align: center;
     flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hour-block:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
 }
 
 .hour-block img {
@@ -56,6 +80,7 @@ body {
     font-size: 14px;
 }
 
+/* Back button */
 #backButton {
     margin-top: 20px;
     padding: 8px 16px;
@@ -69,4 +94,54 @@ body {
 
 #backButton:hover {
     background: rgba(255,255,255,0.4);
+}
+
+/* Raindrops */
+.raindrop {
+    position: absolute;
+    width: 2px;
+    height: 10px;
+    background: rgba(255,255,255,0.7);
+    animation: fall 1s linear infinite;
+}
+
+@keyframes fall {
+    0% { top: -10px; }
+    100% { top: 100%; }
+}
+
+/* Clouds */
+.cloud {
+    position: absolute;
+    width: 80px;
+    height: 50px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    animation-name: floatCloud;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes floatCloud {
+    0% { transform: translateX(-100px); }
+    100% { transform: translateX(100vw); }
+}
+
+/* Sun / Moon */
+.sun, .moon {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 20%;
+    right: 10%;
+    animation: float 6s ease-in-out infinite alternate;
+    box-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+.sun { background: yellow; }
+.moon { background: #f0f0f0; }
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(10px); }
 }
