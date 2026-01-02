@@ -26,7 +26,7 @@ WeatherPulse is a responsive and interactive weather web app that lets users che
 ![alt text](<assets/Screenshot 2026-01-01 214117.png>) 
 
 ## Demo
-<video controls src="assets/Recording 2026-01-01 215032.mp4" title="WeatherPulse Demo"></video>
+[Demo Video](assets/Recording%202026-01-01%20215032.mp4)
 
 ## Installation
 
