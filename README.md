@@ -1,20 +1,35 @@
 # WeatherPulse 🌦️
 
-WeatherPulse is a responsive and interactive weather web app that lets users check the current weather and a 5-day forecast for any city. It includes dynamic visuals, unit conversion, and search history, making it both functional and visually appealing for users and recruiters. It uses the OpenWeatherMap API to fetch live weather data and displays it in a clean, modern interface.
+WeatherPulse is a responsive and interactive weather web app that lets users check the current weather, a 5-day forecast, and an hourly forecast for any city. It uses the OpenWeatherMap API to fetch live weather data and displays it in a clean, modern interface with dynamic animations.
 
 ## Features
 
-- **Current Weather:** Displays city name, temperature, humidity, wind speed, and weather icon.
-- **5-Day Forecast:** Shows daily min/max temperatures and weather icons.
-- **Dynamic Backgrounds:** The card background changes based on the current weather.
-- **Unit Conversion:** Switch between Fahrenheit (°F) and Celsius (°C) for temperature, and mph ↔ m/s for wind speed.
-- **Search History:** Stores up to 5 recent searches, clickable for quick lookup.
-- **Responsive Design:** Works on desktop and mobile screens.
-- **Error handling:** Show error for invalid city names.
+- Current weather: temperature, humidity, wind speed, and weather icon.
+- 5-day forecast with max/min temperatures, weather icons, and clickable cards to view hourly forecasts.
+- Hourly forecast page for each day showing temperature, wind, humidity, and weather icons for 8-hour intervals.
+- Dynamic local time display with language toggle (English / Spanish).
+- Interactive weather animations: sun, moon, clouds, and rain.
+- Search history with quick access to recent cities.
+- Responsive, modern design with hover effects and smooth transitions.
+- Error handling for invalid city names.
+- Built with HTML, CSS, and JavaScript using OpenWeatherMap API.
 
 ## Screenshots
 
-*(Add screenshots here of your app showing current weather and 5-day forecast)*
+
+![alt text](<Screenshot 2026-01-01 194720.png>) 
+
+![alt text](<Screenshot 2026-01-01 194344-2.png>)
+![alt text](<Screenshot 2026-01-01 194401.png>) 
+
+![alt text](<Screenshot 2026-01-01 194455.png>) 
+
+![alt text](<Screenshot 2026-01-01 194418.png>) 
+
+![alt text](<Screenshot 2026-01-01 194431.png>)
+
+## Demo
+<video controls src="Recording 2026-01-01 203032.mp4" title="WeatherPulse Demo"></video>
 
 ## Installation
 
@@ -22,26 +37,30 @@ WeatherPulse is a responsive and interactive weather web app that lets users che
 
     git clone https://github.com/yourusername/weatherpulse.git
 
-2. Open `index.html` in your browser.
+2. Open index.html in your browser.
 
-3. Enter a city name and press Enter or click the search button.
+3. Make sure all files are in the same folder:
 
-4. View current weather and 5-day forecast.
-
-5. Toggle temperature units using the "Show in °C/°F" button.
-
-6. Click a city in the recent search history to quickly look it up again.
+   - `index.html`
+   - `hourly.html`
+   - `script.js`
+   - `hourly.js`
+   - `style.css`
+   - `hourly.css`
+   - `lang.json`
+   - `images/` directory (contains weather icons)
 
 ## Usage
-* Enter a city name in the search box and click the search button or press Enter.
+- Enter a city name in the search box and click the search button or press Enter.
+- The app will display the current weather and the 5-day forecast.
+- Click on any day’s forecast card to view the hourly forecast for that day.
+- Switch languages between English and Spanish using the language toggle button.
+- Toggle between Fahrenheit and Celsius units using the unit toggle button.
+- Recent searches are saved and can be clicked to quickly view weather for those cities.
+- If the city is not found, an error message is displayed.
 
-* The app will display the current weather and the 5-day forecast.
-
-* If the city is not found, an error message is displayed.
-
-## Tech Stack
-
-- **HTML** – Structure of the app
-- **CSS** – Styling, responsive layout, dynamic backgrounds
-- **JavaScript** – Weather API integration, dynamic updates, unit conversion, search history
-- **OpenWeatherMap API** – Provides current weather and 5-day forecast data
+## Technologies Used
+* HTML5
+* CSS3
+* JavaScript
+* OpenWeatherMap API
