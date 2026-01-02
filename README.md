@@ -16,20 +16,18 @@ WeatherPulse is a responsive and interactive weather web app that lets users che
 
 ## Screenshots
 
-![alt text](<Screenshot 2026-01-01 194720.png>)
+![alt text](screenshots/Screenshot 2026-01-01 194720.png)
 
-![alt text](<Screenshot 2026-01-01 194344-2.png>)
+![alt text](screenshots/Screenshot 2026-01-01 194344-2.png)
 
-![alt text](<Screenshot 2026-01-01 194401.png>) 
+![alt text](screenshots/Screenshot 2026-01-01 194401.png)
 
-![alt text](<Screenshot 2026-01-01 194455.png>) 
-![alt text](<Screenshot 2026-01-01 214454.png>)
+![alt text](screenshots/Screenshot 2026-01-01 194455.png) ![alt text](screenshots/Screenshot 2026-01-01 214454.png)
 
-![alt text](<Screenshot 2026-01-01 214117.png>) 
-![alt text](<Screenshot 2026-01-01 214143.png>)
+![alt text](screenshots/Screenshot 2026-01-01 214117.png) ![alt text](screenshots/Screenshot 2026-01-01 214143.png)
 
 ## Demo
-<video controls src="Recording 2026-01-01 215032.mp4" title="Title"></video>
+<video controls src="screenshots/Recording 2026-01-01 215032.mp4" title="Title"></video>
 
 ## Installation
 
