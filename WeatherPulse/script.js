@@ -210,9 +210,10 @@ toggleUnitBtn.addEventListener("click", () => {
 
 // Forecast (Today + 4 next days)
 // Forecast (Today + 4 days)
+// Forecast (Today + 4 days)
 async function showForecast(city) {
     const response = await fetch(forecastUrl + city + `&appid=${apiKey}`);
-    if(response.status == 404) return;
+    if (response.status == 404) return;
 
     const data = await response.json();
     currentWeatherData.forecastData = data;
@@ -220,44 +221,42 @@ async function showForecast(city) {
     const forecastContainer = document.querySelector(".forecast-cards");
     forecastContainer.innerHTML = "";
 
-    // Group forecasts by date string (YYYY-MM-DD)
-    const forecastByDate = {};
+    // Group forecast by date (YYYY-MM-DD)
+    const forecastByDay = {};
     data.list.forEach(item => {
         const date = new Date(item.dt_txt);
-        const dateStr = date.toISOString().split("T")[0]; // "2026-01-01"
-        if (!forecastByDate[dateStr]) forecastByDate[dateStr] = [];
-        forecastByDate[dateStr].push(item);
+        const dateKey = date.toISOString().split('T')[0]; // "YYYY-MM-DD"
+        if (!forecastByDay[dateKey]) forecastByDay[dateKey] = [];
+        forecastByDay[dateKey].push(item);
     });
 
-    // Get today + next 4 days (5 consecutive dates)
-    const allDates = Object.keys(forecastByDate).slice(0,5);
+    // Get today + next 4 days
+    const days = Object.keys(forecastByDay).slice(0, 5);
 
-    allDates.forEach((dateStr, index) => {
-        const dayData = forecastByDate[dateStr];
+    days.forEach((dateKey, index) => {
+        const dayData = forecastByDay[dateKey];
         const temps = dayData.map(d => d.main.temp);
         const minTemp = Math.round(Math.min(...temps));
         const maxTemp = Math.round(Math.max(...temps));
 
-        // Correct weekday
-        const dateObj = new Date(dateStr);
-        const dayIndex = dateObj.getDay(); // 0 = Sunday
-        const dayName = index === 0 ? langData[currentLang].today : langData[currentLang].weekdays[dayIndex];
+        const firstItem = dayData[0];
+        const weatherMain = firstItem.weather[0].main.toLowerCase();
+        let iconUrl = `images/${weatherMain}.png`;
 
-        let iconUrl = "";
-        switch(dayData[0].weather[0].main.toLowerCase()){
-            case "clouds": iconUrl = "images/clouds.png"; break;
-            case "clear": iconUrl = "images/clear.png"; break;
-            case "rain": iconUrl = "images/rain.png"; break;
-            case "drizzle": iconUrl = "images/drizzle.png"; break;
-            case "mist": iconUrl = "images/mist.png"; break;
-            default: iconUrl = "images/clear.png";
-        }
+        // Format weekday for display
+        const dateObj = new Date(dateKey);
+        const weekday = index === 0
+            ? langData[currentLang].today
+            : dateObj.toLocaleDateString(
+                currentLang === "en" ? "en-US" : "es-ES",
+                { weekday: 'short' }
+            ).replace(/^./, s => s.toUpperCase()); // Capitalize first letter
 
         const cardForecast = document.createElement("div");
         cardForecast.className = "forecast-card";
 
         cardForecast.innerHTML = `
-            <p>${dayName}</p>
+            <p>${weekday}</p>
             <img src="${iconUrl}">
             <p class="temps">${maxTemp}°F / ${minTemp}°F</p>
         `;
@@ -265,6 +264,7 @@ async function showForecast(city) {
         // Click to hourly page
         cardForecast.addEventListener("click", () => {
             localStorage.setItem("selectedCity", city);
+            localStorage.setItem("selectedDate", dateKey);
             window.location.href = "hourly.html";
         });
 
